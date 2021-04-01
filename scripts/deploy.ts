@@ -1,7 +1,7 @@
 import { ethers, upgrades } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
 import { DNYCV__factory, DNYCV } from "../typechain";
-import { ContractTransaction } from "ethers";
+import { ContractTransaction, BigNumber } from "ethers";
 
 let dnycv: DNYCV;
 let dnycvFactory: DNYCV__factory;
@@ -11,6 +11,7 @@ let deployer: SignerWithAddress,
 
 const name = 'DYNCV minter';
 const symbol = 'DYNCV';
+const total: BigNumber = BigNumber.from(9001);
 
 interface MembersPrototype {
   member: SignerWithAddress;
@@ -35,19 +36,30 @@ async function main() {
   const members: Array<MembersPrototype> = [
     {
       member: member1,
-      amount: 100,
+      amount: 1337,
     },
     {
       member: member2,
-      amount: 100,
+      amount: 42,
     },
   ];
 
+  let mintedAmount = 0;
+
+  // mint to members
   for (const member of members) {
     let receipt: ContractTransaction = await dnycv.connect(deployer)
       .mint(member.member.address, member.amount);
-    console.log(`minted : ${member.member.address}`);
+    mintedAmount += member.amount;
+    console.log(`minted to: ${member.member.address}, amount ${member.amount}`);
   };
+
+  console.log(`minted to members: ${mintedAmount}`);
+  // mint to self
+  const adminAmount: BigNumber = total.sub(mintedAmount);
+  let receipt: ContractTransaction = await dnycv.connect(deployer)
+    .mint(deployer.address, adminAmount);
+    console.log(`minted to: ${deployer.address}, amount ${adminAmount}`);
 
   let count = await (await dnycv.totalSupply()).toNumber();
   console.log(`totalSupply for contract ${dnycv.address} : ${count}`);

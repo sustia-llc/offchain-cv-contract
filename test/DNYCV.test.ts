@@ -72,7 +72,6 @@ describe("dnycv", () => {
 
     describe("minting", async () => {
         it('deployer can mint tokens', async () => {
-            const tokenId = ethers.BigNumber.from(0);
 
             await expect(dnycv.connect(deployer).mint(other.address, amount))
                 .to.emit(dnycv, 'Transfer')
@@ -123,8 +122,6 @@ describe("dnycv", () => {
 
     describe("burning", async () => {
         it('holders can burn their tokens', async () => {
-            const tokenId = ethers.BigNumber.from(0);
-
             await dnycv.connect(deployer).mint(other.address, amount);
 
             await expect(dnycv.connect(other).burn(amount.sub(1)))
