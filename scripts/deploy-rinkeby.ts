@@ -74,7 +74,7 @@ async function main() {
   // mint to deployer
   const adminAmount: BigNumber = targetTotal.sub(mintedAmount);
   let receipt: ContractTransaction = await dnycv.connect(deployer)
-    .mint(deployer.address, BigNumber.from(adminAmount).mul(tokenBits), { gasLimit: 3000000 });
+    .mint(deployer.address, adminAmount.mul(tokenBits), { gasLimit: 3000000 });
     console.log(`minted to: ${deployer.address}, amount ${adminAmount}`);
 
   let totalSupply = await dnycv.totalSupply();
