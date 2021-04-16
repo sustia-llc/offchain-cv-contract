@@ -1,4 +1,4 @@
-import { ethers, upgrades } from "hardhat";
+import { ethers } from "hardhat";
 import chai from "chai";
 import { DNYCV__factory, DNYCV } from "../typechain";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/dist/src/signer-with-address";
@@ -10,9 +10,6 @@ let dnycv: DNYCV;
 let dnycvFactory: DNYCV__factory;
 let deployer: SignerWithAddress;
 let other: SignerWithAddress;
-
-const name = 'DYNCV minter';
-const symbol = 'DYNCV';
 
 const amount: BigNumber = BigNumber.from(5000);
 
@@ -30,24 +27,18 @@ describe("dnycv", () => {
             deployer
         )) as DNYCV__factory;
 
-        dnycv = (await upgrades.deployProxy(
-            dnycvFactory,
-            [name, symbol],
-            { initializer: 'initialize' }
-        )) as DNYCV;
-
-        await dnycv.deployed();
+        dnycv = (await dnycvFactory.deploy()) as DNYCV;
         expect(dnycv.address).to.properAddress;
     });
 
     describe("deployment", async () => {
-        it('token has correct name', async () => {
-            expect(await dnycv.name()).to.equal(name);
-        });
+        // it('token has correct name', async () => {
+        //     expect(await dnycv.name()).to.equal(name);
+        // });
 
-        it('token has correct symbol', async () => {
-            expect(await dnycv.symbol()).to.equal(symbol);
-        });
+        // it('token has correct symbol', async () => {
+        //     expect(await dnycv.symbol()).to.equal(symbol);
+        // });
 
         it('deployer has the default admin role', async () => {
             expect(await dnycv.getRoleMemberCount(DEFAULT_ADMIN_ROLE)).to.equal(1);

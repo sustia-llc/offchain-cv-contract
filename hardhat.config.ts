@@ -3,7 +3,6 @@ dotEnvConfig();
 
 import { task } from "hardhat/config";
 import { HardhatUserConfig } from "hardhat/types";
-import '@openzeppelin/hardhat-upgrades';
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan";
 import "hardhat-typechain";

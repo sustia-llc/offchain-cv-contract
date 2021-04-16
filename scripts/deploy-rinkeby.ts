@@ -1,6 +1,5 @@
 import * as dotenv from 'dotenv';
-import { ethers, upgrades } from "hardhat";
-import '@openzeppelin/hardhat-upgrades';
+import { ethers } from "hardhat";
 import { DNYCV__factory, DNYCV } from "../typechain";
 import { ContractTransaction, BigNumber } from "ethers";
 // run:
@@ -19,8 +18,6 @@ console.log(`url: ${URL}`);
 let dnycv: DNYCV;
 let dnycvFactory: DNYCV__factory;
 
-const name = 'DYNCV minter';
-const symbol = 'DYNCV';
 const targetTotal: BigNumber = BigNumber.from(9001);
 
 interface MembersPrototype {
@@ -38,13 +35,8 @@ async function main() {
     'DNYCV',
     deployer
   )) as DNYCV__factory;
-  dnycv = (await upgrades.deployProxy(
-    dnycvFactory,
-    [name, symbol],
-    { initializer: 'initialize' }
-  )) as DNYCV;
 
-  await dnycv.deployed();
+  dnycv = (await dnycvFactory.deploy()) as DNYCV;
   console.log("deployed to:", dnycv);
 
   const members: Array<MembersPrototype> = [
@@ -75,9 +67,9 @@ async function main() {
   const adminAmount: BigNumber = targetTotal.sub(mintedAmount);
   let receipt: ContractTransaction = await dnycv.connect(deployer)
     .mint(deployer.address, adminAmount.mul(tokenBits), { gasLimit: 3000000 });
-    console.log(`minted to: ${deployer.address}, amount ${adminAmount}`);
+  console.log(`minted to: ${deployer.address}, amount ${adminAmount}`);
 
-  let totalSupply = await dnycv.totalSupply();
+  let totalSupply = await dnycv.connect(deployer).totalSupply({ gasLimit: 3000000 });
   console.log(`totalSupply for contract ${dnycv.address} : ${totalSupply}`);
 }
 
