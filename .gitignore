@@ -8,3 +8,4 @@ coverage*
 .openzeppelin
 package-lock.json
 *.js
+scripts/mint.ts
